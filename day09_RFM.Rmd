@@ -1,0 +1,58 @@
+---
+title: "day09_RFM"
+author: "Gazal"
+date: "21 November 2017"
+output: html_document
+---
+
+```{r lib, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(dplyr)
+```
+
+
+```{r data}
+path = "D:/STUDY/DSC\ 402\ Machine\ Learning/program/data/rfm/CDNOW_master_v2.csv"
+cdf = read.csv(path)
+dim(cdf)
+```
+
+```{r dataset}
+head(cdf)
+apply(cdf, 2, function(col)sum(is.na(col))/length(col))
+summary(cdf)
+
+```
+
+```{r date}
+cdf <- transform(cdf, date = as.Date(as.character(cdf$date), "%Y%m%d"))
+
+summary(cdf)
+
+cdf$diff_date = Sys.Date() - as.Date(cdf$date,format = "%Y%m%d")
+summary(cdf)
+```
+
+```{r most recent user purchase}
+# cdf %>%
+#   group_by(customer_id) %>%
+#   summarise(last_purchase_before = min(diff_date),
+#             count_transaction = length(number_of_cds),
+#             total_money_spent = sum(dollar_value)) 
+
+cdf %>%
+  group_by(customer_id) %>%
+  summarise(Recency = min(diff_date),
+            Frequency = n(),
+            Monitory = sum(dollar_value)) -> RFM_df
+RFM_df
+
+#plot(as.factor(RFM_df$customer_id), RFM_df$Recency)
+```
+
+
+
+
+
+
+
+
